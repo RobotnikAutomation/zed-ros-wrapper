@@ -36,9 +36,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
     <arg name="camera_id"             default="0" />
     <arg name="gpu_id"                default="-1" />
 
-    <!-- Enable Spatial Mapping -->
-    <arg name="mapping_enabled"       default="false" />
-
     <!-- Position respect to base frame (i.e. "base_link) -->
     <arg name="cam_pos_x"             default="0.0" />
     <arg name="cam_pos_y"             default="0.0" />
@@ -91,7 +88,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <!-- GPU ID -->
         <param name="general/gpu_id"                    value="$(arg gpu_id)" />
 
-        <!-- Mapping -->
-        <param name="mapping/mapping_enabled"           value="$(arg mapping_enabled)" />
+        <remap from="mapping/fused_cloud" to="/robot/map" />
     </node>
 </launch>

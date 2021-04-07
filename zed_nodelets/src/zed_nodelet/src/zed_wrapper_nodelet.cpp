@@ -600,6 +600,8 @@ void ZEDWrapperNodelet::onInit()
   mSrvStartMapping = mNhNs.advertiseService("start_3d_mapping", &ZEDWrapperNodelet::on_start_3d_mapping, this);
   mSrvStopMapping = mNhNs.advertiseService("stop_3d_mapping", &ZEDWrapperNodelet::on_stop_3d_mapping, this);
 
+  mSrvSaveMesh = mNhNs.advertiseService("save_mesh", &ZEDWrapperNodelet::on_save_mesh, this);
+
   mSrvStartObjDet =
       mNhNs.advertiseService("start_object_detection", &ZEDWrapperNodelet::on_start_object_detection, this);
   mSrvStopObjDet = mNhNs.advertiseService("stop_object_detection", &ZEDWrapperNodelet::on_stop_object_detection, this);
@@ -1425,6 +1427,8 @@ bool ZEDWrapperNodelet::start_3d_mapping()
   }
 
   params.range_meter = mMaxMappingRange;
+
+  params.save_texture = true;
 
   sl::ERROR_CODE err = mZed.enableSpatialMapping(params);
 
@@ -4500,6 +4504,39 @@ bool ZEDWrapperNodelet::on_stop_3d_mapping(zed_interfaces::stop_3d_mapping::Requ
   }
 
   return res.done;
+}
+
+bool ZEDWrapperNodelet::on_save_mesh(map_msgs::SaveMap::Request &req,
+                  map_msgs::SaveMap::Response &res)
+{
+  std::lock_guard<std::mutex> lock(mCloseZedMutex);
+
+  if (!mZed.isOpened())
+  {
+    return false;
+  }
+
+  sl::Mesh mesh; // Create a mesh object
+
+  std::chrono::steady_clock::time_point start_time = std::chrono::steady_clock::now();
+
+  mZed.extractWholeSpatialMap(mesh);
+  mesh.filter(sl::MeshFilterParameters::MESH_FILTER::MEDIUM); // Filter the mesh (remove unnecessary vertices and faces)
+  mesh.applyTexture(sl::MESH_TEXTURE_FORMAT::RGB);
+
+  std::chrono::steady_clock::time_point end_time = std::chrono::steady_clock::now();
+
+  // NODELET_INFO_STREAM("Updated: " << updated);
+
+  // double elapsed_usec = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+
+  //        NODELET_INFO_STREAM("Data copy: " << elapsed_usec << " usec [" << ptsCount << "] - " << (static_cast<double>
+  //                        (ptsCount) / elapsed_usec) << " pts/usec");
+
+  
+  mesh.save(sl::String(req.filename.data.c_str())); // Save the mesh in an obj file
+
+  return true;
 }
 
 bool ZEDWrapperNodelet::on_start_object_detection(zed_interfaces::start_object_detection::Request& req,

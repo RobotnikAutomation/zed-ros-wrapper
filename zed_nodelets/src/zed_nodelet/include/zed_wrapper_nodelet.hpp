@@ -68,6 +68,7 @@
 #include <sensor_msgs/point_cloud2_iterator.h>
 #include <stereo_msgs/DisparityImage.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <map_msgs/SaveMap.h>
 
 #include <condition_variable>
 #include <memory>
@@ -312,6 +313,11 @@ protected:
   bool on_stop_3d_mapping(zed_interfaces::stop_3d_mapping::Request& req,
                           zed_interfaces::stop_3d_mapping::Response& res);
 
+  /*! \brief Service callback to save_mesh service
+   */
+  bool on_save_mesh(map_msgs::SaveMap::Request& req,
+                    map_msgs::SaveMap::Response& res);
+
   /*! \brief Service callback to start_object_detection service
    */
   bool on_start_object_detection(zed_interfaces::start_object_detection::Request& req,
@@ -454,6 +460,7 @@ private:
   ros::ServiceServer mSrvToggleLed;
   ros::ServiceServer mSrvStartMapping;
   ros::ServiceServer mSrvStopMapping;
+  ros::ServiceServer mSrvSaveMesh;
   ros::ServiceServer mSrvStartObjDet;
   ros::ServiceServer mSrvStopObjDet;
 
