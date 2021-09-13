@@ -1,6 +1,34 @@
 LATEST CHANGES
 ==============
 
+2021-07-28
+----------
+- New parameter `save_area_memory_db_on_exit` to force Area Memory saving when the node is closed and Area Memory is enabled and valid.
+- Add service `save_Area_map` to trigger an Area Memory saving. 
+- New tool function to transform a relative path to absolute.
+
+2021-07-26
+----------
+- Enabled static IMU TF broadcasting even it `publish_tf` is set to false, making the two options independent. Thx to @bjsowa
+- Moved the `zed_interfaces` folder in the new [`zed-ros-interfaces`](https://github.com/stereolabs/zed-ros-interfaces) repository. The new repository is useful to receive the topics from a ZED node on system where the `zed-ros-wrapper` repository cannot be fully installed, i.e. systems without CUDA support. For this repository nothing changes because the `zed_interfaces` folder is replaced by the `zed-ros-interfaces` git submodule to automatically satisfy all the dependencies.
+
+ZED2i support fix (2021-06-17)
+------------------------------
+- Fix sensors topics pubblication for ZED2i. The support for the new camera was not complete
+
+OpenNI mode fix (2021-06-15)
+----------------------------
+- Fix sensor_msgs type for depth image in OpenNI mode, from `sensor_msgs::image_encodings::mono16` to `sensor_msgs::image_encodings::TYPE_16UC1`. Depth image in OpenNI mode is now compatible with the nodelet `depthimage_to_laserscan`
+
+v3.5.x
+---------
+- Add support for ROS Noetic
+- Add support for SDK v3.5
+- Add support for the new ZED 2i
+- Add new parameter `pos_tracking/pos_tracking_enabled` to enable positional tracking from start even if not required by any subscribed topic. This is useful, for example, to keep the TF always updated.
+- Add new example to start multiple ZED Nodelets inside the same nodelet manager
+- Fixed issue #690
+
 v3.4.x
 ---------
 - Add support for new DEPTH16_MM data type for depth (OPENNI MODE)

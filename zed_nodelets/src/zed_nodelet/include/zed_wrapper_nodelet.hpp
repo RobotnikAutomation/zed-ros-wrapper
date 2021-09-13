@@ -21,10 +21,6 @@
 //
 ///////////////////////////////////////////////////////////////////////////
 
-#include "sl_tools.h"
-
-#include <sl/Camera.hpp>
-
 #include <diagnostic_updater/diagnostic_updater.h>
 #include <dynamic_reconfigure/server.h>
 #include <geometry_msgs/PoseStamped.h>
@@ -37,12 +33,17 @@
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2_ros/transform_listener.h>
 
+#include <sl/Camera.hpp>
+
+#include "sl_tools.h"
+
 // Dynamic reconfiguration
 #include <zed_nodelets/ZedConfig.h>
 
 // Services
 #include <zed_interfaces/reset_odometry.h>
 #include <zed_interfaces/reset_tracking.h>
+#include <zed_interfaces/save_3d_map.h>
 #include <zed_interfaces/set_led_status.h>
 #include <zed_interfaces/set_pose.h>
 #include <zed_interfaces/start_3d_mapping.h>
@@ -54,6 +55,8 @@
 #include <zed_interfaces/stop_remote_stream.h>
 #include <zed_interfaces/stop_svo_recording.h>
 #include <zed_interfaces/toggle_led.h>
+#include <zed_interfaces/save_3d_map.h>
+#include <zed_interfaces/save_area_memory.h>
 
 // Topics
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
@@ -227,7 +230,7 @@ protected:
    */
   void fillCamDepthInfo(sl::Camera& zed, sensor_msgs::CameraInfoPtr depth_info_msg, string frame_id);
 
-  /* \bried Check if FPS and Resolution chosen by user are correct.
+  /*! \brief Check if FPS and Resolution chosen by user are correct.
    *        Modifies FPS to match correct value.
    */
   void checkResolFps();
@@ -312,6 +315,10 @@ protected:
   bool on_stop_3d_mapping(zed_interfaces::stop_3d_mapping::Request& req,
                           zed_interfaces::stop_3d_mapping::Response& res);
 
+  /*! \brief Service callback to save_3d_map service
+   */
+  bool on_save_3d_map(zed_interfaces::save_3d_map::Request& req, zed_interfaces::save_3d_map::Response& res);
+
   /*! \brief Service callback to start_object_detection service
    */
   bool on_start_object_detection(zed_interfaces::start_object_detection::Request& req,
@@ -321,6 +328,11 @@ protected:
    */
   bool on_stop_object_detection(zed_interfaces::stop_object_detection::Request& req,
                                 zed_interfaces::stop_object_detection::Response& res);
+
+  /*! \brief Service callback to save_area_memory service
+   */
+  bool on_save_area_memory(zed_interfaces::save_area_memory::Request& req,
+                                zed_interfaces::save_area_memory::Response& res);                          
 
   /*! \brief Utility to initialize the pose variables
    */
@@ -342,23 +354,23 @@ protected:
    */
   bool getCamera2BaseTransform();
 
-  /* \bried Start tracking
+  /*! \brief Start tracking
    */
   void start_pos_tracking();
 
-  /* \bried Start spatial mapping
+  /*! \brief Start spatial mapping
    */
   bool start_3d_mapping();
 
-  /* \bried Stop spatial mapping
+  /*! \brief Stop spatial mapping
    */
   void stop_3d_mapping();
 
-  /* \bried Start object detection
+  /*! \brief Start object detection
    */
   bool start_obj_detect();
 
-  /* \bried Stop object detection
+  /*! \brief Stop object detection
    */
   void stop_obj_detect();
 
@@ -381,6 +393,11 @@ protected:
    */
   void updateDynamicReconfigure();
 
+  /*! \brief Save the current area map if positional tracking
+   * and area memory are active
+   */
+  bool saveAreaMap(std::string file_path, std::string* out_msg=nullptr);
+
 private:
   uint64_t mFrameCount = 0;
 
@@ -397,7 +414,7 @@ private:
 
   bool mStopNode = false;
 
-  const double mSensPubRate = 400.0;
+  const double mSensPubRate = 400.0; // Maximum ODR for ZED2/ZED2i. You can change this to 800 for ZED-M, but it's not recommended
 
   // Publishers
   image_transport::CameraPublisher mPubRgb;       //
@@ -454,8 +471,10 @@ private:
   ros::ServiceServer mSrvToggleLed;
   ros::ServiceServer mSrvStartMapping;
   ros::ServiceServer mSrvStopMapping;
+  ros::ServiceServer mSrvSave3dMap;
   ros::ServiceServer mSrvStartObjDet;
   ros::ServiceServer mSrvStopObjDet;
+  ros::ServiceServer mSrvSaveAreaMemory;
 
   // ----> Topics (ONLY THOSE NOT CHANGING WHILE NODE RUNS)
   // Camera info
@@ -522,6 +541,7 @@ private:
   int mZedId;
   int mDepthStabilization;
   std::string mAreaMemDbPath;
+  bool mSaveAreaMapOnClosing = true;
   std::string mSvoFilepath;
   std::string mRemoteStreamAddr;
   bool mSensTimestampSync;
@@ -532,9 +552,10 @@ private:
   double mCamMinDepth;
   double mCamMaxDepth;
 
-  bool mTrackingActivated;
-
-  bool mTrackingReady;
+  // Positional tracking
+  bool mPosTrackingEnabled = false;
+  bool mPosTrackingActivated = false;
+  bool mPosTrackingReady = false;
   bool mTwoDMode = false;
   double mFixedZValue = 0.0;
   bool mFloorAlignment = false;
@@ -677,6 +698,7 @@ private:
   // Spatial mapping
   bool mMappingEnabled;
   bool mMappingRunning;
+  bool mMapSave=false;
   float mMappingRes = 0.1;
   float mMaxMappingRange = -1;
   double mFusedPcPubFreq = 2.0;
