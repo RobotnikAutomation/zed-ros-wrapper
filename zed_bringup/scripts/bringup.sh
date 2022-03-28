@@ -15,6 +15,11 @@ export JETSON_CAMERA_2_MODEL=none
 export JETSON_CAMERA_2_ID=rear_rgbd_camera
 export JETSON_CAMERA_2_DEVICE_ID=1
 
+
+while ! $HOME/ntp-seconds.sh; do
+       sleep 1
+done
+
 export ROS_MASTER_URI=http://$ROBOT_HOSTNAME:11311
 export ROS_IP=$JETSON_HOSTNAME
 source /opt/ros/melodic/setup.bash
