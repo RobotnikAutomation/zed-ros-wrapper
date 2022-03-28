@@ -10,4 +10,3 @@ ExecStart=/home/jetson/bringup.sh
 
 [Install]
 WantedBy=multi-user.target
-it±Ã»ö5
