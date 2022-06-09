@@ -71,7 +71,7 @@
 	    	<param name="stream"                            value="$(arg stream_1)" />
 
 	    	<!-- Camera ID -->
-	    	<param name="general/zed_id"                    value="$(arg camera_device_id_1)" />
+		<param name="general/serial_number"             value="$(arg camera_device_id_1)" />
 
 	    	<!-- GPU ID -->
 	    	<param name="general/gpu_id"                    value="$(arg gpu_id_1)" />
@@ -107,7 +107,7 @@
 		<param name="stream"                            value="$(arg stream_2)" />
 
 		<!-- Camera ID -->
-		<param name="general/zed_id"                    value="$(arg camera_device_id_2)" />
+		<param name="general/serial_number"             value="$(arg camera_device_id_2)" />
 
 		<!-- GPU ID -->
 		<param name="general/gpu_id"                    value="$(arg gpu_id_2)" />
