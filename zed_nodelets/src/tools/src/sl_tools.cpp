@@ -34,8 +34,10 @@ int checkCameraReady(unsigned int serial_number)
 {
   int id = -1;
   auto f = sl::Camera::getDeviceList();
-
+  cout << "checkCameraReady: " << f.size() << endl;
   for (auto& it : f)
+    cout << "Serial number: " << it.serial_number << endl;
+    cout << "Camera state: " << it.camera_state << endl;
     if (it.serial_number == serial_number && it.camera_state == sl::CAMERA_STATE::AVAILABLE)
     {
       id = it.id;
@@ -48,9 +50,11 @@ sl::DeviceProperties getZEDFromSN(unsigned int serial_number)
 {
   sl::DeviceProperties prop;
   auto f = sl::Camera::getDeviceList();
-
+  cout << "checkCameraReady: " << f.size() << endl;
   for (auto& it : f)
   {
+    cout << "Serial number: " << it.serial_number << endl;
+    cout << "Camera state: " << it.camera_state << endl;
     if (it.serial_number == serial_number && it.camera_state == sl::CAMERA_STATE::AVAILABLE)
     {
       prop = it;
