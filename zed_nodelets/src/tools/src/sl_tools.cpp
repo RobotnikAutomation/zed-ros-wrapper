@@ -34,15 +34,19 @@ int checkCameraReady(unsigned int serial_number)
 {
   int id = -1;
   auto f = sl::Camera::getDeviceList();
-  cout << "checkCameraReady: " << f.size() << endl;
+  cout << "CheckCameraReady: " << f.size() << " cameras detected." << endl;
+  cout << "Looking for camera with sn: " << serial_number << endl;
   for (auto& it : f)
-    cout << "Serial number: " << it.serial_number << endl;
+  {
+    cout << "New camera found with sn: " << it.serial_number << endl;
     cout << "Camera state: " << it.camera_state << endl;
+    cout << "Id: " << it.id << endl;
     if (it.serial_number == serial_number && it.camera_state == sl::CAMERA_STATE::AVAILABLE)
-    {
+    {      
       id = it.id;
+      cout << "Good! Found camera with sn: " << it.serial_number << " id:" << it.id << " prop:" << prop << endl;
     }
-
+  }
   return id;
 }
 
@@ -50,14 +54,17 @@ sl::DeviceProperties getZEDFromSN(unsigned int serial_number)
 {
   sl::DeviceProperties prop;
   auto f = sl::Camera::getDeviceList();
-  cout << "checkCameraReady: " << f.size() << endl;
+  cout << "GetZEDFromSN: " << f.size() << " cameras detected." << endl;
+  cout << "Looking for camera with sn: " << serial_number << endl;
   for (auto& it : f)
   {
-    cout << "Serial number: " << it.serial_number << endl;
+    cout << "New camera found with sn: " << it.serial_number << endl;
     cout << "Camera state: " << it.camera_state << endl;
+    cout << "Id: " << it.id << endl;
     if (it.serial_number == serial_number && it.camera_state == sl::CAMERA_STATE::AVAILABLE)
     {
       prop = it;
+      cout << "Good! Found camera with sn: " << it.serial_number << " id:" << it.id << " prop:" << prop << endl;
     }
   }
 
