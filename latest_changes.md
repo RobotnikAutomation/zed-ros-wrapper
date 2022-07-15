@@ -1,23 +1,39 @@
 LATEST CHANGES
 ==============
 
-2021-07-28
+2022-04-26
 ----------
+- Add Plane Detection. See [ZED Documentation](https://www.stereolabs.com/docs/ros/plane_detection/)
+
+2022-03-30
+----------
+- Fix wrong TF broadcasting when calling the `set_pose`, `reset_tracking`, and `reset_odometry` services. Now the initial odometry is coherent with the new starting point.
+
+2022-03-28
+----------
+- Add parameter `sensors/max_pub_rate` to set the maximum publishing frequency of sensors data
+- Improve Sensors thread
+
+2022-03-16
+-----------
+- Fix the frame links of barometer, magnetometer, and temperature sensors for ZED2i
+
+v3.7.x
+---------
+- Add support for the new Neural Depth mode
+- Add support for head detection model
+- Add support for sport-related object class
+- Add support for X_MEDIUM neural network models
+- Enable AI for ZED Mini
+- Add new `<zed>_base_link` frame on the base of the camera to easily handle camera positioning on robots. Thx @civerachb-cpr
+- Improve URDF by adding 3° slope for ZED and ZED2, X-offset for optical frames to correctly match the CMOS sensors position on the PCB, X-offset for mounting screw on ZED2i
+- Add `zed_macro.urdf.xacro` to be included by other `xacro` file to easily integrate ZED cameras in the robot descriptions. See [PR #771](https://github.com/stereolabs/zed-ros-wrapper/pull/771) for details. Thx @civerachb-cpr
 - New parameter `save_area_memory_db_on_exit` to force Area Memory saving when the node is closed and Area Memory is enabled and valid.
 - Add service `save_Area_map` to trigger an Area Memory saving. 
 - New tool function to transform a relative path to absolute.
-
-2021-07-26
-----------
 - Enabled static IMU TF broadcasting even it `publish_tf` is set to false, making the two options independent. Thx to @bjsowa
 - Moved the `zed_interfaces` folder in the new [`zed-ros-interfaces`](https://github.com/stereolabs/zed-ros-interfaces) repository. The new repository is useful to receive the topics from a ZED node on system where the `zed-ros-wrapper` repository cannot be fully installed, i.e. systems without CUDA support. For this repository nothing changes because the `zed_interfaces` folder is replaced by the `zed-ros-interfaces` git submodule to automatically satisfy all the dependencies.
-
-ZED2i support fix (2021-06-17)
-------------------------------
 - Fix sensors topics pubblication for ZED2i. The support for the new camera was not complete
-
-OpenNI mode fix (2021-06-15)
-----------------------------
 - Fix sensor_msgs type for depth image in OpenNI mode, from `sensor_msgs::image_encodings::mono16` to `sensor_msgs::image_encodings::TYPE_16UC1`. Depth image in OpenNI mode is now compatible with the nodelet `depthimage_to_laserscan`
 
 v3.5.x
