@@ -15,7 +15,7 @@
 	<arg name="camera_serial_number_1"       default="$(optenv JETSON_CAMERA_1_SERIAL_NUMBER 0)" /> <!-- if 0 it will use device ID-->
 
     <arg name="tf_camera_prefix_1"           default="$(arg prefix)$(arg camera_id_1)" />
-	<arg name="camera_name_1"				 default="$(arg tf_camera_prefix_1)" />
+	<arg name="camera_name_1"				 default="$(arg tf_camera_prefix_1)_zed" />
 
     <arg name="svo_file_1"                   default="" /> <!-- <arg name="svo_file" default="path/to/svo/file.svo"> -->
     <arg name="stream_1"                     default="" /> <!-- <arg name="stream" default="<ip_address>:<port>"> -->
@@ -44,7 +44,7 @@
 	<arg name="camera_serial_number_2"       default="$(optenv JETSON_CAMERA_2_SERIAL_NUMBER 0)" /> <!-- if 0 it will use device ID-->
 
     <arg name="tf_camera_prefix_2"           default="$(arg prefix)$(arg camera_id_2)" />
-	<arg name="camera_name_2"				 default="$(arg tf_camera_prefix_2)" />
+	<arg name="camera_name_2"				 default="$(arg tf_camera_prefix_2)_zed" />
 
     <arg name="svo_file_2"                   default="" /> <!-- <arg name="svo_file" default="path/to/svo/file.svo"> -->
     <arg name="stream_2"                     default="" /> <!-- <arg name="stream" default="<ip_address>:<port>"> -->
@@ -77,7 +77,7 @@
     		<group if="$(arg publish_urdf)">
     		    <param name="$(arg camera_name_1)_description"
     		           command="$(find xacro)/xacro '$(find zed_wrapper)/urdf/zed_descr.urdf.xacro'
-    		                    camera_name:=$(arg camera_name_1)_zed
+    		                    camera_name:=$(arg camera_name_1)
     		                    camera_model:=$(arg camera_model_1)
     		                    base_frame:=$(arg base_frame_1)
     		                    cam_pos_x:=$(arg cam_pos_x_1)
@@ -99,7 +99,7 @@
 		    	<rosparam file="$(find zed_bringup)/config/$(arg camera_model_1).yaml" command="load" />
 
 		    	<!-- Camera name -->
-		    	<param name="general/camera_name"               value="$(arg tf_camera_prefix_1)" />
+		    	<param name="general/camera_name"               value="$(arg camera_name_1)" />
 		    	<!-- Frames -->
 		    	<param name="general/base_frame"                value="$(arg base_frame_1)" />
 		    	<!--param name="general/camera_frame"              value="$(arg camera_frame_1)" /-->
@@ -127,7 +127,7 @@
     		<group if="$(arg publish_urdf)">
     		    <param name="$(arg camera_name_2)_description"
     		           command="$(find xacro)/xacro '$(find zed_wrapper)/urdf/zed_descr.urdf.xacro'
-    		                    camera_name:=$(arg camera_name_2)_zed
+    		                    camera_name:=$(arg camera_name_2)
     		                    camera_model:=$(arg camera_model_2)
     		                    base_frame:=$(arg base_frame_2)
     		                    cam_pos_x:=$(arg cam_pos_x_2)
@@ -149,7 +149,7 @@
 				<rosparam file="$(find zed_bringup)/config/$(arg camera_model_2).yaml" command="load" />
 
 				<!-- Camera name -->
-				<param name="general/camera_name"               value="$(arg tf_camera_prefix_2)" />
+				<param name="general/camera_name"               value="$(arg camera_name_2)" />
 				<!-- Frames -->
 				<param name="general/base_frame"                value="$(arg base_frame_2)" />
 				<!--param name="general/camera_frame"              value="$(arg camera_frame_2)" /-->
