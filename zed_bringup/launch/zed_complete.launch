@@ -10,12 +10,12 @@
 
     <!-- CAMERA 1 -->
     <arg name="camera_model_1"               default="$(optenv JETSON_CAMERA_1_MODEL none)" /> <!-- 'none', 'zed', 'zed2', 'zed2i' or 'zedm'-->
-    <arg name="camera_id_1"                  default="$(optenv JETSON_CAMERA_1_ID front_rgbd_camera)"/>
+    <arg name="camera_base_frame_id_1"       default="$(optenv JETSON_CAMERA_1_BASE_FRAME_ID front_rgbd_camera_base_link)"/> <!-- frame where the camera is attached -->
     <arg name="camera_device_id_1"           default="$(optenv JETSON_CAMERA_1_DEVICE_ID 0)" />
     <arg name="camera_serial_number_1"       default="$(optenv JETSON_CAMERA_1_SERIAL_NUMBER 0)" /> <!-- if 0 it will use device ID-->
 
-    <arg name="tf_camera_prefix_1"           default="$(arg prefix)$(arg camera_id_1)" />
-    <arg name="camera_name_1"		     default="$(arg tf_camera_prefix_1)_zed" /> <!-- cannot be equal than base_frame if URDF is published-->
+    <arg name="tf_camera_prefix_1"           default="$(arg prefix)$(arg camera_base_frame_id_1)" />
+    <arg name="camera_name_1"		     	 default="$(arg tf_camera_prefix_1)_zed" /> <!-- cannot be equal than base_frame if URDF is published-->
 
     <arg name="svo_file_1"                   default="" /> <!-- <arg name="svo_file" default="path/to/svo/file.svo"> -->
     <arg name="stream_1"                     default="" /> <!-- <arg name="stream" default="<ip_address>:<port>"> -->
@@ -23,7 +23,7 @@
     <arg name="node_name_1"                  default="$(arg camera_id_1)" />
     <arg name="gpu_id_1"                     default="-1" />
 
-    <arg name="base_frame_1"                 default="$(arg tf_camera_prefix_1)_base_link" />
+    <arg name="base_frame_1"                 default="$(arg tf_camera_prefix_1)" />
 
     <arg name="mapping_enabled_1"            default="false" />
 
@@ -39,12 +39,12 @@
 
     <!-- CAMERA 2 -->
     <arg name="camera_model_2"               default="$(optenv JETSON_CAMERA_2_MODEL none)" /> <!-- 'none', 'zed', 'zed2', 'zed2i' or 'zedm'-->
-    <arg name="camera_id_2"                  default="$(optenv JETSON_CAMERA_2_ID rear_rgbd_camera)"/>
+    <arg name="camera_base_frame_id_1"       default="$(optenv JETSON_CAMERA_2_BASE_FRAME_ID rear_rgbd_camera_base_link)"/> <!-- frame where the camera is attached -->
     <arg name="camera_device_id_2"           default="$(optenv JETSON_CAMERA_2_DEVICE_ID 1)" />
     <arg name="camera_serial_number_2"       default="$(optenv JETSON_CAMERA_2_SERIAL_NUMBER 0)" /> <!-- if 0 it will use device ID-->
 
     <arg name="tf_camera_prefix_2"           default="$(arg prefix)$(arg camera_id_2)" />
-    <arg name="camera_name_2"   	     default="$(arg tf_camera_prefix_2)_zed" /> <!-- cannot be equal than base_frame if URDF is published-->
+    <arg name="camera_name_2"   	         default="$(arg tf_camera_prefix_2)_zed" /> <!-- cannot be equal than base_frame if URDF is published-->
 
     <arg name="svo_file_2"                   default="" /> <!-- <arg name="svo_file" default="path/to/svo/file.svo"> -->
     <arg name="stream_2"                     default="" /> <!-- <arg name="stream" default="<ip_address>:<port>"> -->
@@ -53,7 +53,7 @@
 
     <arg name="gpu_id_2"                     default="-1" />
 
-    <arg name="base_frame_2"                 default="$(arg tf_camera_prefix_2)_base_link" />
+    <arg name="base_frame_2"                 default="$(arg tf_camera_prefix_2)" />
 
     <arg name="mapping_enabled_2"            default="false" />
 
