@@ -5,15 +5,17 @@
     <!-- COMMON -->
     <arg name="robot_id"                   default="$(optenv ROBOT_ID robot)"/>
     <arg name="prefix"                     default="$(arg robot_id)_" />
+    <arg name="publish_urdf"			   default="$(optenv ZED_PUBLISH_URDF true)" /> <!-- Publish ZED urdf -->
 
 
     <!-- CAMERA 1 -->
-    <arg name="camera_model_1"               default="$(optenv JETSON_CAMERA_1_MODEL none)" /> 
+    <arg name="camera_model_1"               default="$(optenv JETSON_CAMERA_1_MODEL none)" /> <!-- 'none', 'zed', 'zed2', 'zed2i' or 'zedm'-->
     <arg name="camera_id_1"                  default="$(optenv JETSON_CAMERA_1_ID front_rgbd_camera)"/>
     <arg name="camera_device_id_1"           default="$(optenv JETSON_CAMERA_1_DEVICE_ID 0)" />
 	<arg name="camera_serial_number_1"       default="$(optenv JETSON_CAMERA_1_SERIAL_NUMBER 0)" /> <!-- if 0 it will use device ID-->
 
     <arg name="tf_camera_prefix_1"           default="$(arg prefix)$(arg camera_id_1)" />
+	<arg name="camera_name_1"				 default="$(arg tf_camera_prefix_1)" />
 
     <arg name="svo_file_1"                   default="" /> <!-- <arg name="svo_file" default="path/to/svo/file.svo"> -->
     <arg name="stream_1"                     default="" /> <!-- <arg name="stream" default="<ip_address>:<port>"> -->
@@ -22,18 +24,27 @@
     <arg name="gpu_id_1"                     default="-1" />
 
     <arg name="base_frame_1"                 default="$(arg tf_camera_prefix_1)_base_link" />
-    <arg name="camera_frame_1"               default="$(arg tf_camera_prefix_1)_link" />
 
     <arg name="mapping_enabled_1"            default="false" />
 
+	<!-- Position respect to base frame (i.e. "base_link) -->
+    <arg name="cam_pos_x_1"             default="0.0" />
+    <arg name="cam_pos_y_1"             default="0.0" />
+    <arg name="cam_pos_z_1"             default="0.0" />
+
+    <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_roll_1"              default="0.0" />
+    <arg name="cam_pitch_1"             default="0.0" />
+    <arg name="cam_yaw_1"               default="0.0" />
 
     <!-- CAMERA 2 -->
-    <arg name="camera_model_2"               default="$(optenv JETSON_CAMERA_2_MODEL none)" />
+    <arg name="camera_model_2"               default="$(optenv JETSON_CAMERA_2_MODEL none)" /> <!-- 'none', 'zed', 'zed2', 'zed2i' or 'zedm'-->
     <arg name="camera_id_2"                  default="$(optenv JETSON_CAMERA_2_ID rear_rgbd_camera)"/>
     <arg name="camera_device_id_2"           default="$(optenv JETSON_CAMERA_2_DEVICE_ID 1)" />
 	<arg name="camera_serial_number_2"       default="$(optenv JETSON_CAMERA_2_SERIAL_NUMBER 0)" /> <!-- if 0 it will use device ID-->
 
     <arg name="tf_camera_prefix_2"           default="$(arg prefix)$(arg camera_id_2)" />
+	<arg name="camera_name_2"				 default="$(arg tf_camera_prefix_2)" />
 
     <arg name="svo_file_2"                   default="" /> <!-- <arg name="svo_file" default="path/to/svo/file.svo"> -->
     <arg name="stream_2"                     default="" /> <!-- <arg name="stream" default="<ip_address>:<port>"> -->
@@ -43,86 +54,121 @@
     <arg name="gpu_id_2"                     default="-1" />
 
     <arg name="base_frame_2"                 default="$(arg tf_camera_prefix_2)_base_link" />
-    <arg name="camera_frame_2"               default="$(arg tf_camera_prefix_2)_link" />
 
     <arg name="mapping_enabled_2"            default="false" />
 
+	<!-- Position respect to base frame (i.e. "base_link) -->
+    <arg name="cam_pos_x_2"             default="0.0" />
+    <arg name="cam_pos_y_2"             default="0.0" />
+    <arg name="cam_pos_z_2"             default="0.0" />
+
+    <!-- Orientation respect to base frame (i.e. "base_link) -->
+    <arg name="cam_roll_2"              default="0.0" />
+    <arg name="cam_pitch_2"             default="0.0" />
+    <arg name="cam_yaw_2"               default="0.0" />
 
     <group ns="$(arg robot_id)" >
 	
-	<!-- CAMERA 1 -->
+		<!-- CAMERA 1 -->
 
-	<group if="$(eval camera_model_1 != 'none')">
-		
-    	   <node name="$(arg node_name_1)" pkg="zed_wrapper" type="zed_wrapper_node" output="screen" required="true">
+		<group if="$(eval camera_model_1 != 'none')">
 
-	    	<rosparam file="$(find zed_bringup)/config/common.yaml" command="load" />
-	    	<rosparam file="$(find zed_bringup)/config/$(arg camera_model_1).yaml" command="load" />
+			<!-- ROS URDF description of the ZED camera -->
+    		<group if="$(arg publish_urdf)">
+    		    <param name="$(arg camera_name_1)_description"
+    		           command="$(find xacro)/xacro '$(find zed_wrapper)/urdf/zed_descr.urdf.xacro'
+    		                    camera_name:=$(arg camera_name_1)_zed
+    		                    camera_model:=$(arg camera_model_1)
+    		                    base_frame:=$(arg base_frame_1)
+    		                    cam_pos_x:=$(arg cam_pos_x_1)
+    		                    cam_pos_y:=$(arg cam_pos_y_1)
+    		                    cam_pos_z:=$(arg cam_pos_z_1)
+    		                    cam_roll:=$(arg cam_roll_1)
+    		                    cam_pitch:=$(arg cam_pitch_1)
+    		                    cam_yaw:=$(arg cam_yaw_1)"
+    		    />
 
-	    	<!-- Camera name -->
-	    	<param name="general/camera_name"               value="$(arg tf_camera_prefix_1)" />
+    		    <node name="$(arg camera_name_1)_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" required="true">
+    		        <remap from="robot_description" to="$(arg camera_name_1)_description" />
+    		    </node>
+    		</group>
 
-	    	<!-- Frames -->
-	    	<param name="general/base_frame"                value="$(arg base_frame_1)" />
-	    	<param name="general/camera_frame"              value="$(arg camera_frame_1)" />
+    		<node name="$(arg node_name_1)" pkg="zed_wrapper" type="zed_wrapper_node" output="screen" required="true">
 
-	    	<!-- SVO file path -->
-	    	<param name="svo_file"                          value="$(arg svo_file_1)" />
+		    	<rosparam file="$(find zed_bringup)/config/common.yaml" command="load" />
+		    	<rosparam file="$(find zed_bringup)/config/$(arg camera_model_1).yaml" command="load" />
 
-	   	<!-- Remote stream -->
-	    	<param name="stream"                            value="$(arg stream_1)" />
+		    	<!-- Camera name -->
+		    	<param name="general/camera_name"               value="$(arg tf_camera_prefix_1)" />
+		    	<!-- Frames -->
+		    	<param name="general/base_frame"                value="$(arg base_frame_1)" />
+		    	<!--param name="general/camera_frame"              value="$(arg camera_frame_1)" /-->
+		    	<!-- SVO file path -->
+		    	<param name="svo_file"                          value="$(arg svo_file_1)" />
+		   		<!-- Remote stream -->
+		    	<param name="stream"                            value="$(arg stream_1)" />
+		    	<!-- Camera ID -->
+				<param name="general/serial_number"             value="$(arg camera_serial_number_1)" />
+				<param name="general/zed_id"                    value="$(arg camera_device_id_1)" />
+		    	<!-- GPU ID -->
+		    	<param name="general/gpu_id"                    value="$(arg gpu_id_1)" />
+		   		<!-- Mapping -->
+		    	<param name="mapping/mapping_enabled"           value="$(arg mapping_enabled_1)" />
+    		</node>
 
-	    	<!-- Camera ID -->
-			<param name="general/serial_number"             value="$(arg camera_serial_number_1)" />
-			<param name="general/zed_id"                    value="$(arg camera_device_id_1)" />
+		</group>
+	
 
-	    	<!-- GPU ID -->
-	    	<param name="general/gpu_id"                    value="$(arg gpu_id_1)" />
+		<!-- CAMERA 2 -->
 
-	   	<!-- Mapping -->
-	    	<param name="mapping/mapping_enabled"           value="$(arg mapping_enabled_1)" />
+		<group if="$(eval camera_model_2 != 'none')">
 
-    	   </node>
+			<!-- ROS URDF description of the ZED camera -->
+    		<group if="$(arg publish_urdf)">
+    		    <param name="$(arg camera_name_2)_description"
+    		           command="$(find xacro)/xacro '$(find zed_wrapper)/urdf/zed_descr.urdf.xacro'
+    		                    camera_name:=$(arg camera_name_2)_zed
+    		                    camera_model:=$(arg camera_model_2)
+    		                    base_frame:=$(arg base_frame_2)
+    		                    cam_pos_x:=$(arg cam_pos_x_2)
+    		                    cam_pos_y:=$(arg cam_pos_y_2)
+    		                    cam_pos_z:=$(arg cam_pos_z_2)
+    		                    cam_roll:=$(arg cam_roll_2)
+    		                    cam_pitch:=$(arg cam_pitch_2)
+    		                    cam_yaw:=$(arg cam_yaw_2)"
+    		    />
+
+    		    <node name="$(arg camera_name_2)_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" required="true">
+    		        <remap from="robot_description" to="$(arg camera_name_2)_description" />
+    		    </node>
+    		</group>
+
+		    <node name="$(arg node_name_2)" pkg="zed_wrapper" type="zed_wrapper_node" output="screen" required="true">
+
+				<rosparam file="$(find zed_bringup)/config/common.yaml" command="load" />
+				<rosparam file="$(find zed_bringup)/config/$(arg camera_model_2).yaml" command="load" />
+
+				<!-- Camera name -->
+				<param name="general/camera_name"               value="$(arg tf_camera_prefix_2)" />
+				<!-- Frames -->
+				<param name="general/base_frame"                value="$(arg base_frame_2)" />
+				<!--param name="general/camera_frame"              value="$(arg camera_frame_2)" /-->
+				<!-- SVO file path -->
+				<param name="svo_file"                          value="$(arg svo_file_2)" />
+				<!-- Remote stream -->
+				<param name="stream"                            value="$(arg stream_2)" />
+				<!-- Camera ID -->
+				<param name="general/serial_number"             value="$(arg camera_serial_number_2)" />
+				<param name="general/zed_id"                    value="$(arg camera_device_id_2)" />
+				<!-- GPU ID -->
+				<param name="general/gpu_id"                    value="$(arg gpu_id_2)" />
+				<!-- Mapping -->
+				<param name="mapping/mapping_enabled"           value="$(arg mapping_enabled_2)" />
+
+		    </node>
+
+		</group>
 
 	</group>
-     
-
-	<!-- CAMERA 2 -->
-
-	<group if="$(eval camera_model_2 != 'none')">
-		
-	    <node name="$(arg node_name_2)" pkg="zed_wrapper" type="zed_wrapper_node" output="screen" required="true">
-
-		<rosparam file="$(find zed_bringup)/config/common.yaml" command="load" />
-		<rosparam file="$(find zed_bringup)/config/$(arg camera_model_2).yaml" command="load" />
-
-		<!-- Camera name -->
-		<param name="general/camera_name"               value="$(arg tf_camera_prefix_2)" />
-
-		<!-- Frames -->
-		<param name="general/base_frame"                value="$(arg base_frame_2)" />
-		<param name="general/camera_frame"              value="$(arg camera_frame_2)" />
-
-		<!-- SVO file path -->
-		<param name="svo_file"                          value="$(arg svo_file_2)" />
-
-		<!-- Remote stream -->
-		<param name="stream"                            value="$(arg stream_2)" />
-
-		<!-- Camera ID -->
-		<param name="general/serial_number"             value="$(arg camera_serial_number_2)" />
-		<param name="general/zed_id"                    value="$(arg camera_device_id_2)" />
-
-		<!-- GPU ID -->
-		<param name="general/gpu_id"                    value="$(arg gpu_id_2)" />
-
-		<!-- Mapping -->
-		<param name="mapping/mapping_enabled"           value="$(arg mapping_enabled_2)" />
-
-	    </node>
-
-	</group>
-
-</group>
 
 </launch>
