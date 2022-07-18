@@ -15,7 +15,7 @@
 	<arg name="camera_serial_number_1"       default="$(optenv JETSON_CAMERA_1_SERIAL_NUMBER 0)" /> <!-- if 0 it will use device ID-->
 
     <arg name="tf_camera_prefix_1"           default="$(arg prefix)$(arg camera_id_1)" />
-	<arg name="camera_name_1"				 default="$(arg tf_camera_prefix_1)_zed" />
+	<arg name="camera_name_1"				 default="$(arg tf_camera_prefix_1)_zed" /> <!-- cannot be equal than base_frame if URDF is published-->
 
     <arg name="svo_file_1"                   default="" /> <!-- <arg name="svo_file" default="path/to/svo/file.svo"> -->
     <arg name="stream_1"                     default="" /> <!-- <arg name="stream" default="<ip_address>:<port>"> -->
@@ -44,7 +44,7 @@
 	<arg name="camera_serial_number_2"       default="$(optenv JETSON_CAMERA_2_SERIAL_NUMBER 0)" /> <!-- if 0 it will use device ID-->
 
     <arg name="tf_camera_prefix_2"           default="$(arg prefix)$(arg camera_id_2)" />
-	<arg name="camera_name_2"				 default="$(arg tf_camera_prefix_2)_zed" />
+	<arg name="camera_name_2"				 default="$(arg tf_camera_prefix_2)_zed" /> <!-- cannot be equal than base_frame if URDF is published-->
 
     <arg name="svo_file_2"                   default="" /> <!-- <arg name="svo_file" default="path/to/svo/file.svo"> -->
     <arg name="stream_2"                     default="" /> <!-- <arg name="stream" default="<ip_address>:<port>"> -->
