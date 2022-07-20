@@ -79,7 +79,7 @@
     		<group if="$(arg publish_urdf)">
     		    <param name="$(arg camera_name_1)_description"
     		           command="$(find xacro)/xacro '$(find zed_wrapper)/urdf/zed_descr.urdf.xacro'
-    		                    camera_name:=$(arg camera_name_1)
+    		                    camera_name:=$(arg prefix)$(arg camera_name_1)
     		                    camera_model:=$(arg camera_model_1)
     		                    base_frame:=$(arg base_frame_1)
     		                    cam_pos_x:=$(arg cam_pos_x_1)
@@ -129,7 +129,7 @@
     		<group if="$(arg publish_urdf)">
     		    <param name="$(arg camera_name_2)_description"
     		           command="$(find xacro)/xacro '$(find zed_wrapper)/urdf/zed_descr.urdf.xacro'
-    		                    camera_name:=$(arg camera_name_2)
+    		                    camera_name:=$(arg prefix)$(arg camera_name_2)
     		                    camera_model:=$(arg camera_model_2)
     		                    base_frame:=$(arg base_frame_2)
     		                    cam_pos_x:=$(arg cam_pos_x_2)
