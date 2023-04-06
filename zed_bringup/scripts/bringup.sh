@@ -2,7 +2,7 @@
 
 # Network configuration
 export ROBOT_HOSTNAME=192.168.0.200
-export JETSON_HOSTNAME=192.168.0.50
+export JETSON_HOSTNAME=192.168.0.60
 export JETSON_WORKSPACE=~/catkin_ws
 
 # Camera 1 configuration
