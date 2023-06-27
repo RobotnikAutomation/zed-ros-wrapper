@@ -22,7 +22,7 @@ done
 
 export ROS_MASTER_URI=http://$ROBOT_HOSTNAME:11311
 export ROS_IP=$JETSON_HOSTNAME
-source /opt/ros/melodic/setup.bash
+source /opt/ros/$ROS_DISTRO/setup.bash
 source $JETSON_WORKSPACE/devel/setup.bash
 
 echo ""
