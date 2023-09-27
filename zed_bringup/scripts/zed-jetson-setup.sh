@@ -13,8 +13,6 @@ verbose on" > ~/.screenrc
 
 echo "Install jetson bringup"
 cp bringup.sh ~/bringup.sh
-sudo cp jetson-ros.service /etc/systemd/system
-sudo systemctl enable jetson-ros.service
 
 grep -q -F "192.168.0.200 robot-time-server" /etc/hosts
 if [ $? -ne 0 ]; then
